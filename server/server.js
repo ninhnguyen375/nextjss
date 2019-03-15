@@ -11,9 +11,7 @@ const handle = app.getRequestHandler();
 
 app.prepare().then(() => {
   const server = express();
-  const MONGO_URI = dev
-    ? 'mongodb://127.0.0.1:27017/webbanhangdb'
-    : 'mongodb://ninhnguyen375:ninhnguyen3755@ds253783.mlab.com:53783/webbanhangdb';
+  const MONGO_URI = 'mongodb://ninhnguyen375:ninhnguyen3755@ds253783.mlab.com:53783/webbanhangdb';
 
   // config middleware
   server.use(bodyParser.json());

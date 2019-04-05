@@ -1,180 +1,130 @@
-import React from 'react';
+import React, { Component } from 'react';
+import SearchNav from '../Search/SearchNav';
 import Link from 'next/link';
-import MoreIcon from '@material-ui/icons/MoreVert';
 
-import {
-  Menu,
-  MenuItem,
-  Typography,
-  IconButton,
-  Toolbar,
-  AppBar,
-  Button
-} from '@material-ui/core';
-
-import { withStyles } from '@material-ui/core/styles';
-
-import UnSigninedNav from './UnSigninedNav';
-import SigninedNav from './SigninedNav';
-import { SearchBar } from './SearchBar';
-import CategoryList from '../CategoryList';
-import NavbarStyle from './Nabar.styles';
-
-const styles = NavbarStyle;
-
-class Navbar extends React.Component {
-  state = {
-    anchorEl: null,
-    mobileMoreAnchorEl: null
-  };
-
-  handleProfileMenuOpen = event => {
-    this.setState({ anchorEl: event.currentTarget });
-  };
-
-  handleMenuClose = () => {
-    this.setState({ anchorEl: null });
-    this.handleMobileMenuClose();
-  };
-
-  handleMobileMenuOpen = event => {
-    this.setState({ mobileMoreAnchorEl: event.currentTarget });
-  };
-
-  handleMobileMenuClose = () => {
-    this.setState({ mobileMoreAnchorEl: null });
-  };
-
+const isServer = typeof window === 'undefined';
+let JSMain = null;
+let jQuery = null;
+if (!isServer) {
+  jQuery = require('jquery');
+  JSMain = require('../../static/lib/js/JF');
+}
+class Navbar extends Component {
+  componentDidMount() {
+    JSMain.init(jQuery);
+  }
   render() {
-    const { anchorEl, mobileMoreAnchorEl } = this.state;
-    const { classes } = this.props;
-    const isMenuOpen = Boolean(anchorEl);
-    const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+    return (
+      <div className="container-fluid">
+        <div className="row" id="menu">
+          <div className="container" id="menu-flex">
+            <div className="menu-mobile__btn col-2 d-md-none">
+              <button id="toggle-menu">
+                <div className="top" />
+                <div className="middle" />
+                <div className="bottom" />
+              </button>
+            </div>
 
-    const renderMenu = (
-      <>
-        {this.props.auth.auth_group === 'admin' && (
-          <Menu
-            anchorEl={anchorEl}
-            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-            open={isMenuOpen}
-            onClose={this.handleMenuClose}
-          >
-            <div>
-              <Link href="/admin">
+            <div className="logo logo-head d-block col-6 col-md-2">
+              <Link href="/">
                 <a>
-                  <MenuItem onClick={this.handleMenuClose}>
-                    Admin Manager
-                  </MenuItem>
+                  <img src="/static/images/all/JamesFurlinn-logo.png" />
                 </a>
               </Link>
             </div>
-          </Menu>
-        )}
-      </>
-    );
 
-    const renderMobileMenu = (
-      <Menu
-        anchorEl={mobileMoreAnchorEl}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-        open={isMobileMenuOpen}
-        onClose={this.handleMenuClose}
-      >
-        <MenuItem>
-          <CategoryList onMobileMenuClose={this.handleMobileMenuClose} />
-        </MenuItem>
+            <nav id="the-menu" className="the-menu col-md-8">
+              <ul>
+                <li id="men">
+                  <a href="#">MEN</a>
+                  <ul id="m">
+                    <li>
+                      <Link href="/men">
+                        <a>All</a>
+                      </Link>
+                    </li>
+                    <li>
+                      <a href="Pants.html"> Pants</a>
+                    </li>
+                    <li>
+                      <a href="Shirt.html"> Shirt</a>
+                    </li>
+                    <li>
+                      <a href="Accesories.html"> Accesories</a>
+                    </li>
+                  </ul>
+                </li>
+                <li id="woman">
+                  <a href="#">WOMAN</a>
+                  <ul id="w">
+                    <li>
+                      <Link href="/woman">
+                        <a> All</a>
+                      </Link>
+                    </li>
+                    <li>
+                      <a href="Dress-wm.html"> Dress</a>
+                    </li>
+                    <li>
+                      <a href="Shirt-wm.html"> Shirt</a>
+                    </li>
+                    <li>
+                      <a href="Accesories-wm.html"> Accesories</a>
+                    </li>
+                  </ul>
+                </li>
+                <li id="col">
+                  <a href="#">COLLECTIONS</a>
+                  <ul id="c">
+                    <li>
+                      <Link href="/collections">
+                        <a>All</a>
+                      </Link>
+                    </li>
+                    <li>
+                      <a href="JamesFurlinn-BMV.html"> Be My Valentine</a>
+                    </li>
+                    <li>
+                      <a href="JamesFurlinn-BNT.html"> Back to Nature</a>
+                    </li>
+                    <li>
+                      <a href="JamesFurlinn-SOB.html"> Shape of Beige</a>
+                    </li>
+                  </ul>
+                </li>
+                <li id="up">
+                  <Link href="/contact">
+                    <a>CONTACT</a>
+                  </Link>
+                </li>
+              </ul>
+            </nav>
 
-        {!this.props.auth.auth_key ? (
-          <UnSigninedNav
-            handleMobileMenuClose={this.handleMobileMenuClose}
-            screen="mobile"
-            btnColor="primary"
-          />
-        ) : (
-          <SigninedNav
-            isAdmin={this.props.auth.auth_group === 'admin'}
-            handleMobileMenuClose={this.handleMobileMenuClose}
-            screen="mobile"
-            btnColor="primary"
-            onLogout={this.props.onLogout}
-            userName={this.props.auth.auth_name}
-          />
-        )}
-      </Menu>
-    );
-
-    return (
-      <>
-        <AppBar position="sticky" color="primary">
-          <Toolbar>
-            <Link href="/">
-              <a>
-                <Typography
-                  className={classes.title}
-                  variant="h6"
-                  color="inherit"
-                  noWrap
-                  style={{ color: 'white' }}
-                >
-                  ShopPhone
-                </Typography>
-              </a>
-            </Link>
-
-            {/* Search bar */}
-            <SearchBar classes={classes} />
-
-            <Link href="/">
-              <a>
-                <Button
-                  color="inherit"
-                  variant="contained"
-                  style={{
-                    marginLeft: 5,
-                    background: '#5773f3',
-                    color: 'white'
-                  }}
-                >
-                  Home
-                </Button>
-              </a>
-            </Link>
-
-            <div className={classes.grow} />
-            <div className={classes.sectionDesktop}>
-              {/* Categories */}
-              <CategoryList />
-
-              {!this.props.auth.auth_key ? (
-                <UnSigninedNav btnColor="inherit" />
-              ) : (
-                <SigninedNav
-                  btnColor="inherit"
-                  onLogout={this.props.onLogout}
-                  userName={this.props.auth.auth_name}
-                  handleProfileMenuOpen={this.handleProfileMenuOpen}
-                />
-              )}
+            <div className="cart offset-1 col-3 offset-md-0 col-md-2">
+              <div className="d-none d-lg-block offset-md-2" />
+              <div className="col-4 col-lg-3 icon" id="srch" title="Search">
+                <i className="fas fa-search" />
+              </div>
+              <div className="col-4 col-lg-3 icon">
+                <a href="#" title="Shopping Bag">
+                  <i className="fas fa-shopping-bag" />
+                </a>
+              </div>
+              <div className="col-4 col-lg-3 icon">
+                <a href="login.html" title="Sign in">
+                  <i className="far fa-user" />
+                </a>
+              </div>
             </div>
-            <div className={classes.sectionMobile}>
-              <IconButton
-                aria-haspopup="true"
-                onClick={this.handleMobileMenuOpen}
-                color="inherit"
-              >
-                <MoreIcon />
-              </IconButton>
-            </div>
-          </Toolbar>
-        </AppBar>
-        {renderMenu}
-        {renderMobileMenu}
-      </>
+          </div>
+        </div>
+
+        {/* Search */}
+        <SearchNav />
+      </div>
     );
   }
 }
 
-export default withStyles(styles)(Navbar);
+export default Navbar;
